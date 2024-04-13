@@ -1,11 +1,17 @@
 import { IUser } from '../entities';
 
-export interface ICreateUserRepository {
-  create(
-    input: ICreateUserRepository.Input,
-  ): Promise<ICreateUserRepository.Output>;
+export interface ICreateUser {
+  create(input: ICreateUser.Input): Promise<ICreateUser.Output>;
 }
-export namespace ICreateUserRepository {
+export namespace ICreateUser {
   export type Input = IUser.Create;
+  export type Output = IUser;
+}
+
+export interface IFindOneUser {
+  findOne(input: IFindOneUser.Input): Promise<IFindOneUser.Output>;
+}
+export namespace IFindOneUser {
+  export type Input = string;
   export type Output = IUser;
 }

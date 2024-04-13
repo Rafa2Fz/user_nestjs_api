@@ -1,16 +1,24 @@
-import { Controller, Inject, Post, Body } from "@nestjs/common";
-import { CreateUserUseCase } from "src/domain/usecase/user/create.usecase";
-import { CreateUserDto } from "./dto/user.dto";
+import { Controller, Inject, Post, Body, Get, Param } from '@nestjs/common';
+import { CreateUserUseCase } from 'src/domain/usecase/user/create.usecase';
+import { CreateUserDto } from './dto/user.dto';
+import { FindOneUserUseCase } from 'src/domain/usecase/user/findOne.usecase';
 
-@Controller("user")
+@Controller('user')
 export class UserController {
   constructor(
     @Inject(CreateUserUseCase)
-    private readonly createUser: CreateUserUseCase
+    private readonly createUser: CreateUserUseCase,
+    @Inject(FindOneUserUseCase)
+    private readonly findOneUser: FindOneUserUseCase,
   ) {}
 
   @Post()
-  create(@Body() body: CreateUserDto) {
-    return this.createUser.execute(body);
+  async create(@Body() body: CreateUserDto) {
+    return await this.createUser.execute(body);
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return await this.findOneUser.execute(id);
   }
 }
