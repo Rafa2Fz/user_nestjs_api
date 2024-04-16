@@ -7,7 +7,7 @@ import { IUser } from 'src/domain/entities';
 export class FindOneUserUseCase {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async execute(id: string): Promise<IUser | null> {
+  async execute(id: string): Promise<IUser | undefined> {
     return await this.userRepository.findOne(id);
   }
 }

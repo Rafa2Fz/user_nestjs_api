@@ -3,9 +3,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Address } from './address.entity';
 @Entity('users')
 export class User implements IUser {
   @PrimaryGeneratedColumn('uuid')
@@ -34,4 +37,22 @@ export class User implements IUser {
     generatedType: 'VIRTUAL',
   })
   updated_at: Date;
+
+  @ManyToMany(() => Address, (address) => address.users, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinTable({
+    name: 'user_addresses', // nome da tabela de junção
+    joinColumn: {
+      name: 'id_user',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'id_address',
+      referencedColumnName: 'id',
+    },
+  })
+  addresses: Address[];
 }

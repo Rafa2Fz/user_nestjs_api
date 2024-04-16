@@ -6,5 +6,5 @@ export const userMock = new IUser({
   gender: 'male',
   password: '1234',
   marital_status: 'single',
-  date_of_birthday: new Date('01/02/1993'),
+  date_of_birthday: new Date('04/13/1993'),
 });

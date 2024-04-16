@@ -14,14 +14,15 @@ describe('FindOneUserService', () => {
       id: '42bb371a-29f9-4e71-9b8b-1cc8ebc8382e',
     });
   });
-
   beforeEach(async () => {
     findOneUserUseCase = new FindOneUserUseCase(userRepository);
   });
   afterEach(() => {
     jest.clearAllMocks();
   });
-
+  afterAll(() => {
+    jest.useRealTimers();
+  });
   it('should be defined', async () => {
     expect(findOneUserUseCase).toBeDefined();
   });

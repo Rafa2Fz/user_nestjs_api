@@ -1,6 +1,6 @@
-import { randomUUID } from "crypto";
+import { randomUUID } from 'crypto';
 
-type UserProps = Omit<IUser, "id" | "created_at" | "updated_at"> & {
+type UserProps = Omit<IUser, 'id' | 'created_at' | 'updated_at'> & {
   id?: string;
 };
 export class IUser {
@@ -21,7 +21,8 @@ export class IUser {
 }
 
 export namespace IUser {
-  export type Create = Omit<IUser, "id" | "created_at" | "updated_at"> & {
+  export type Create = Omit<IUser, 'id' | 'created_at' | 'updated_at'> & {
     id?: string;
   };
+  export type Update = Partial<IUser> & { id: string };
 }
