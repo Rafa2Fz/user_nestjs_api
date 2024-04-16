@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  user_nestjs_api:
+    image: postgres
+    container_name: db_postgres
+    ports:
+      - 3306:5432
+    environment:
+      - POSTGRES_USER=user_api
+      - POSTGRES_PASSWORD=user_api
+      - POSTGRES_DB=user_api
