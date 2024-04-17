@@ -3,13 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IAddress, IUser } from '../../../domain/entities';
 import {
   ICreateUser,
+  IDeleteUser,
   IFindOneUser,
   IFindUser,
   IFindUserWithPassword,
   IUpdateUser,
 } from '../../../domain/repositories';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { Address, User } from '../entities';
+import { paginate } from 'nestjs-typeorm-paginate';
 @Injectable()
 export class UserRepository
   implements
@@ -17,7 +19,8 @@ export class UserRepository
     IFindOneUser,
     IUpdateUser,
     IFindUser,
-    IFindUserWithPassword
+    IFindUserWithPassword,
+    IDeleteUser
 {
   constructor(
     @InjectRepository(User)
@@ -64,14 +67,18 @@ export class UserRepository
     }
   }
 
-  async find(input: IFindUser.Input): Promise<IFindUser.Output> {
+  async find({
+    order,
+    options,
+    filters,
+  }: IFindUser.Input): Promise<IFindUser.Output> {
     try {
-      let conditions = {};
+      const conditions = {};
 
-      if (input.email) {
-        conditions['email'] = input.email;
+      if (filters.email) {
+        conditions['email'] = filters.email;
       }
-      const users = await this.userRepository
+      const users = this.userRepository
         .createQueryBuilder('user')
         .select([
           'user.id',
@@ -81,10 +88,22 @@ export class UserRepository
           'user.marital_status',
         ])
         .leftJoinAndSelect('user.addresses', 'addresses')
-        .where(conditions)
-        .getMany();
+        .where(conditions);
 
-      return users;
+      if (order) {
+        users.orderBy(
+          order.order_field ? order.order_field : 'name',
+          order.type ? order.type : 'ASC',
+        );
+      }
+      if (options.restMode === 'list') {
+        return await users.getMany();
+      }
+
+      return await paginate<IUser>(users, {
+        limit: options.restLimit,
+        page: options.restPage,
+      });
     } catch (err) {
       throw new BadRequestException(err);
     }
@@ -138,5 +157,13 @@ export class UserRepository
       .getOne();
 
     return user;
+  }
+
+  async delete(input: string): Promise<DeleteResult> {
+    try {
+      return await this.userRepository.delete({ id: input });
+    } catch (err) {
+      throw new BadRequestException(err);
+    }
   }
 }
