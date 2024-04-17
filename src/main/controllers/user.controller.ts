@@ -8,6 +8,7 @@ import {
   Put,
   Query,
   Headers,
+  Delete,
 } from '@nestjs/common';
 import { CreateUserUseCase } from 'src/domain/usecase/user/create.usecase';
 import {
@@ -20,6 +21,7 @@ import { FindOneUserUseCase } from 'src/domain/usecase/user/findOne.usecase';
 import { UpdateUserUseCase } from 'src/domain/usecase/user/update.usecase';
 import { Public } from '../decorators/auth/public-routes.decorator';
 import { FindAllUserUseCase } from 'src/domain/usecase/user/findAll.usecase';
+import { DeleteUserUseCase } from 'src/domain/usecase/user/delete.usecase';
 
 @Controller('users')
 export class UserController {
@@ -32,6 +34,8 @@ export class UserController {
     private readonly updateUser: UpdateUserUseCase,
     @Inject(FindAllUserUseCase)
     private readonly findAllUser: FindAllUserUseCase,
+    @Inject(DeleteUserUseCase)
+    private readonly deleteUser: DeleteUserUseCase,
   ) {}
   @Public()
   @Post()
@@ -43,15 +47,17 @@ export class UserController {
   async findOne(@Param('id') id: string) {
     return await this.findOneUser.execute(id);
   }
+
   @Get()
   async findAll(
     @Headers() headers: PaginationHeaderOptions,
     @Query() query?: UserFinddAllQuery,
   ) {
-    const restPage = headers['rest-page'];
-    const restLimit = headers['rest-limit'];
+    const restPage = headers['rest-page'] ? Number(headers['rest-page']) : 1;
+    const restLimit = headers['rest-limit'] ? Number(headers['rest-limit']) : 5;
+    const restMode = headers['rest-mode'];
     return await this.findAllUser.execute({
-      options: {},
+      options: { restPage, restLimit, restMode },
       order: { order_field: query.order_field, type: query.type },
       filters: {
         email: query.email,
@@ -61,5 +67,9 @@ export class UserController {
   @Put(':id')
   async update(@Param('id') id: string, @Body() body: UpdateUserDto) {
     return await this.updateUser.execute({ id, ...body });
+  }
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return await this.deleteUser.execute(id);
   }
 }

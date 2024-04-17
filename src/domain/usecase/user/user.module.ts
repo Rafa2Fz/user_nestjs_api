@@ -5,6 +5,7 @@ import { FindOneUserUseCase } from './findOne.usecase';
 import { UpdateUserUseCase } from './update.usecase';
 import { BcryptModule } from 'src/infrastructure/services/bcrypt/bcrypt.module';
 import { FindAllUserUseCase } from './findAll.usecase';
+import { DeleteUserUseCase } from './delete.usecase';
 
 @Module({
   imports: [PostgresDatabase, BcryptModule],
@@ -13,12 +14,14 @@ import { FindAllUserUseCase } from './findAll.usecase';
     FindOneUserUseCase,
     UpdateUserUseCase,
     FindAllUserUseCase,
+    DeleteUserUseCase,
   ],
   exports: [
     CreateUserUseCase,
     FindOneUserUseCase,
     UpdateUserUseCase,
     FindAllUserUseCase,
+    DeleteUserUseCase,
   ],
 })
 export class UserModule {}

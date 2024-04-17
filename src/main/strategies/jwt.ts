@@ -14,10 +14,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: any) {
     const users = await this.userRepository.find({
-      email: payload.email,
+      options: { restMode: 'list', restLimit: 0, restPage: 0 },
+      order: { order_field: 'name', type: 'ASC' },
+      filters: {
+        email: payload.email,
+      },
     });
     const user = users[0];
-  
+
     if (!user) {
       throw new UnauthorizedException({
         message: 'User or password invalid!',
